@@ -1,20 +1,22 @@
-name: Publish to GitHub Packages
+name: Publish to npm
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: read
-  packages: write
+  contents: write
+  id-token: write
+  pull-requests: write
 
 concurrency:
-  group: github-packages-publish
+  group: npm-publish
   cancel-in-progress: false
 
 jobs:
   publish:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -24,15 +26,13 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          registry-url: https://npm.pkg.github.com
-          scope: "@tscircuit"
+          registry-url: https://registry.npmjs.org/
           package-manager-cache: false
+      - run: npm install -g pver
       - run: bun install
       - run: bun test
       - run: bun run typecheck
       - run: bun run format:check
       - run: bun run build
       - run: npm pack --dry-run
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ github.token }}
+      - run: pver release

@@ -46,10 +46,10 @@ an error, rather than silently cancelling. Face tokens cannot create new panels;
 `angledface` does not specify an arbitrary fold angle.
 
 Unknown tokens, repeated parameters, duplicate feature names, unavailable faces,
-and malformed parentheses are rejected when parsing. Mesh creation additionally
+and malformed parentheses are rejected when parsing. Geometry generation in jscad-electronics additionally
 rejects cutouts touching/crossing an edge or bend tangent and overlapping cutout
 bounding boxes (a conservative restriction).
 
-The parser compiles this language to the mesh schema's `panel`, `u`, and `v`
+The parser compiles this language to the parameter schema's `panel`, `u`, and `v`
 coordinates. Application examples and visual snapshots should use complete model
 strings rather than duplicating those internal coordinates.

@@ -81,6 +81,8 @@ export function assertNemaMotor(size: NemaSize) {
     "nema17_backfaceholes0",
     "nema17_backholedepth5mm",
     "nema17_backholespacing42mm",
+    "nema17_backholespacing1mm",
+    "nema17_backfaceholes_backholespacing2mm",
     "nema17_backholediameter1mm",
     "nema17_backscrewm1",
     "nema17_backfacescrews_backscrewm8",

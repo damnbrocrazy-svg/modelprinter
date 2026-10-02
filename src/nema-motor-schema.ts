@@ -164,6 +164,8 @@ const validate = (p: NemaMotorModelProps, ctx: z.RefinementCtx) => {
       (p.backFace === "screws"
         ? Math.max(p.backFaceHoleDiameter, screw.headDiameter)
         : p.backFaceHoleDiameter) / 2
+    if (p.backFaceHoleSpacing <= 2 * radius)
+      issue("Rear holes and screw heads must not overlap each other")
     if (
       p.backFaceHoleSpacing + 2 * radius >= p.bodyWidth ||
       p.bodyWidth - p.faceCornerChamfer - p.backFaceHoleSpacing <=
@@ -200,7 +202,7 @@ const validate = (p: NemaMotorModelProps, ctx: z.RefinementCtx) => {
     p.mountingHoleThrough &&
     p.bodyWidth - p.bodyCornerChamfer - p.mountingHoleSpacing >= -r * Math.SQRT2
   )
-    issue("Body and rear cap must clear through mounting holes")
+    issue("Body must clear through front mounting holes")
   if (p.shaftLength <= p.pilotLength)
     issue("Shaft tip must extend beyond the pilot")
   if (

@@ -1,3 +1,4 @@
+import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"
 import { z } from "zod"
 import { hexSocketBoltModelDefinitionSchema } from "./hex-socket-bolt-schema"
@@ -198,6 +199,7 @@ export type FlexScreenModelDefinition = z.infer<
 >
 
 export const modelDefinitionSchema = z.union([
+  nemaMotorModelDefinitionSchema,
   sheetMetalModelDefinitionSchema,
   flexScreenModelDefinitionSchema,
   hexSocketBoltModelDefinitionSchema,

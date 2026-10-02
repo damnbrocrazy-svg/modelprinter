@@ -6,3 +6,6 @@ export * from "./hex-socket-bolt-mesh"
 
 export * from "./sheet-metal-schema"
 export * from "./sheet-metal-mesh"
+
+export * from "./nema-motor-schema"
+export * from "./nema-motor-mesh"

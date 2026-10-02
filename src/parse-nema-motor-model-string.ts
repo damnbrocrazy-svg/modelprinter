@@ -6,6 +6,9 @@ const lengths = {
   length: "bodyLength",
   bodylength: "bodyLength",
   bodywidth: "bodyWidth",
+  backholespacing: "backFaceHoleSpacing",
+  backholediameter: "backFaceHoleDiameter",
+  backholedepth: "backFaceHoleDepth",
   shaftlength: "shaftLength",
   shaftdiameter: "shaftDiameter",
   flatdepth: "shaftFlatDepth",
@@ -38,6 +41,20 @@ export function parseNemaMotorModelParams(raw: RawModelprinterParams) {
     if (name in lengths) {
       property = lengths[name as keyof typeof lengths]
       parsed = value
+    } else if (
+      ["backfaceholes", "backfacescrews", "plainbackface"].includes(name)
+    ) {
+      if (value) throw new Error(`NEMA flag "${name}" does not accept a value`)
+      property = "backFace"
+      parsed =
+        name === "backfaceholes"
+          ? "holes"
+          : name === "backfacescrews"
+            ? "screws"
+            : "plain"
+    } else if (name === "backscrewm") {
+      property = "backFaceScrewSize"
+      parsed = `M${value}`
     } else if (name === "flatangle") {
       property = "shaftFlatAngle"
       if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:deg)?$/i.test(value))

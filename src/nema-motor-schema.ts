@@ -188,17 +188,3 @@ export type NemaMotorModelPropsInput = z.input<typeof nemaMotorModelPropsSchema>
 export type NemaMotorModelDefinition = z.output<
   typeof nemaMotorModelDefinitionSchema
 >
-
-/** Four holes on a square pitch, centered on the shaft axis. */
-export function getNemaMotorMountingHoleCenters(
-  input: NemaMotorModelPropsInput,
-): [number, number][] {
-  const { mountingHoleSpacing } = nemaMotorModelPropsSchema.parse(input)
-  const h = mountingHoleSpacing / 2
-  return [
-    [-h, -h],
-    [h, -h],
-    [h, h],
-    [-h, h],
-  ]
-}

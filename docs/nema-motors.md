@@ -42,7 +42,6 @@ Modifiers: `l` / `length` / `bodylength`, `bodywidth`, `shaftlength`,
 `pilotdiameter`, `pilotlength`, `frontcap`, `rearcap`, `facechamfer`, `bodychamfer`.
 Duplicate, unknown and geometrically invalid parameters fail validation.
 
-`getNemaMotorMountingHoleCenters` exposes exact mounting centers.
-`createNemaMotorSections` exposes closed extrusion profiles, holes, and Z ranges
-for renderers. `createNemaMotorMesh` returns outward-wound indexed triangles.
-Each section is closed separately; an assembly retains internal mating faces.
+This package defines parameters and parses model strings; it does not generate
+motor geometry. The corresponding components in jscad-electronics build the
+JSCAD solids and own the visual snapshots and geometry tests.

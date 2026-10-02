@@ -31,7 +31,8 @@
     "url": "git+https://github.com/tscircuit/modelprinter.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "license": "MIT",
   "keywords": [

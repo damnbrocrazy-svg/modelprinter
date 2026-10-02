@@ -24,7 +24,7 @@
     "typecheck": "tsc --noEmit",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "prepare": "bun run build"
+    "prepare": "bun install --ignore-scripts && bun run build"
   },
   "repository": {
     "type": "git",
@@ -52,6 +52,6 @@
     "zod": "^3.25.67"
   },
   "peerDependencies": {
-    "zod": "*"
+    "zod": "^3.25.67"
   }
 }

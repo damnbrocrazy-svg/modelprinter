@@ -1,6 +1,6 @@
 {
   "name": "@tscircuit/modelprinter",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Parametric CAD model strings and schemas for tscircuit",
   "type": "module",
   "main": "./index.js",

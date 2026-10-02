@@ -14,16 +14,17 @@
   "files": [
     "index.js",
     "index.d.ts",
-    "index.js.map"
+    "index.js.map",
+    "types"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --sourcemap --clean && bun scripts/prepare-package.ts",
+    "build": "tsup src/index.ts --format esm --sourcemap --clean && tsc -p tsconfig.build.json && bun scripts/prepare-package.ts",
     "prepack": "bun run build",
     "test": "bun test",
     "typecheck": "tsc --noEmit",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "snapshot:bolts": "BUN_UPDATE_SNAPSHOTS=1 bun test tests/hex-socket-bolt.test.ts"
+    "prepare": "bun install --ignore-scripts && bun run build"
   },
   "repository": {
     "type": "git",
@@ -41,22 +42,16 @@
     "dsl"
   ],
   "dependencies": {
-    "@tscircuit/mm": "^0.0.9",
-    "earcut": "^3.2.3"
+    "@tscircuit/mm": "^0.0.9"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.9",
-    "@tscircuit/alphabet": "^0.0.27",
-    "@tscircuit/image-utils": "^0.0.10",
-    "@types/earcut": "^3.0.0",
     "bun-types": "^1.4.0",
-    "gl-matrix": "^3.4.4",
-    "poppygl": "^0.0.29",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "zod": "^3.25.67"
   },
   "peerDependencies": {
-    "zod": "*"
+    "zod": "^3.25.67"
   }
 }

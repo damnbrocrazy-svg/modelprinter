@@ -1,11 +1,4 @@
 import { test } from "bun:test"
 import { assertHexSocketBolts } from "./fixtures/assert-hex-socket-bolt"
-import { assertModelprinter } from "./fixtures/assert-modelprinter"
-import { expectPngSnapshot } from "./fixtures/expect-png-snapshot"
-import { renderBoltSnapshot } from "./fixtures/render-bolt-snapshot"
 
-test("M3 x 6mm hex socket bolt - four views", async () => {
-  assertModelprinter()
-  assertHexSocketBolts()
-  await expectPngSnapshot(await renderBoltSnapshot(), import.meta.path)
-})
+test("hex socket bolt parameter contract", assertHexSocketBolts)

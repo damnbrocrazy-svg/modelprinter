@@ -1,3 +1,4 @@
+import { parseNemaMotorModelParams } from "./parse-nema-motor-model-string"
 import { parseSheetMetalModelParams } from "./parse-sheet-metal-model-string"
 import type { ModelDefinition } from "./flex-screen-schema"
 import { parseHexSocketBoltModelParams } from "./parse-hex-socket-bolt-model-string"
@@ -8,6 +9,7 @@ import {
 } from "./parse-model-string"
 
 const modelFunctions = {
+  nema: parseNemaMotorModelParams,
   sheetmetal: parseSheetMetalModelParams,
   flexscreen: parseFlexScreenModelParams,
   hexsocketbolt: parseHexSocketBoltModelParams,

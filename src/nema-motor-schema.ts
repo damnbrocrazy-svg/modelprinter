@@ -1,5 +1,9 @@
 import { z } from "zod"
 import {
+  hexSocketBoltDimensions,
+  metricBoltSizeSchema,
+} from "./hex-socket-bolt-schema"
+import {
   positiveModelLengthSchema as positive,
   nonnegativeModelLengthSchema as nonnegative,
 } from "./model-length-schema"
@@ -21,6 +25,8 @@ export type NemaSize = z.infer<typeof nemaSizeSchema>
  */
 export const nemaMotorDimensions = {
   8: {
+    backFaceScrewSize: "M2",
+    backFaceHoleDepth: 2,
     bodyWidth: 20.3,
     bodyLength: 33,
     mountingHoleSpacing: 16,
@@ -41,6 +47,8 @@ export const nemaMotorDimensions = {
     bodyCornerChamfer: 3,
   },
   17: {
+    backFaceScrewSize: "M3",
+    backFaceHoleDepth: 4.5,
     bodyWidth: 42.3,
     bodyLength: 38,
     mountingHoleSpacing: 31,
@@ -61,6 +69,8 @@ export const nemaMotorDimensions = {
     bodyCornerChamfer: 6,
   },
   23: {
+    backFaceScrewSize: "M4",
+    backFaceHoleDepth: 4.5,
     bodyWidth: 56.4,
     bodyLength: 51,
     mountingHoleSpacing: 47.14,
@@ -84,6 +94,12 @@ export const nemaMotorDimensions = {
 
 const shape = {
   nemaSize: nemaSizeSchema,
+  /** Rear cap at Z=-bodyLength: bare, open bores or installed cap screws. */
+  backFace: z.enum(["plain", "holes", "screws"]).optional(),
+  backFaceHoleSpacing: positive.optional(),
+  backFaceHoleDiameter: positive.optional(),
+  backFaceHoleDepth: positive.optional(),
+  backFaceScrewSize: metricBoltSizeSchema.optional(),
   bodyWidth: positive.optional(),
   bodyLength: positive.optional(),
   mountingHoleSpacing: positive.optional(),
@@ -109,8 +125,16 @@ const shape = {
 }
 const resolve = (p: z.output<z.ZodObject<typeof shape>>) => {
   const d = nemaMotorDimensions[p.nemaSize]
+  const backFaceScrewSize = p.backFaceScrewSize ?? d.backFaceScrewSize
+  const screw = hexSocketBoltDimensions[backFaceScrewSize]
   return {
     nemaSize: p.nemaSize,
+    backFace: p.backFace ?? "screws",
+    backFaceHoleSpacing:
+      p.backFaceHoleSpacing ?? p.mountingHoleSpacing ?? d.mountingHoleSpacing,
+    backFaceHoleDiameter: p.backFaceHoleDiameter ?? screw.diameter,
+    backFaceHoleDepth: p.backFaceHoleDepth ?? d.backFaceHoleDepth,
+    backFaceScrewSize,
     bodyWidth: p.bodyWidth ?? d.bodyWidth,
     bodyLength: p.bodyLength ?? d.bodyLength,
     mountingHoleSpacing: p.mountingHoleSpacing ?? d.mountingHoleSpacing,
@@ -134,6 +158,23 @@ const resolve = (p: z.output<z.ZodObject<typeof shape>>) => {
 export type NemaMotorModelProps = ReturnType<typeof resolve>
 const validate = (p: NemaMotorModelProps, ctx: z.RefinementCtx) => {
   const issue = (message: string) => ctx.addIssue({ code: "custom", message })
+  if (p.backFace !== "plain") {
+    const screw = hexSocketBoltDimensions[p.backFaceScrewSize]
+    const radius =
+      (p.backFace === "screws"
+        ? Math.max(p.backFaceHoleDiameter, screw.headDiameter)
+        : p.backFaceHoleDiameter) / 2
+    if (
+      p.backFaceHoleSpacing + 2 * radius >= p.bodyWidth ||
+      p.bodyWidth - p.faceCornerChamfer - p.backFaceHoleSpacing <=
+        radius * Math.SQRT2
+    )
+      issue("Rear holes and screw heads must fit entirely inside the rear face")
+    if (p.backFaceHoleDepth >= p.rearCapLength)
+      issue("Rear hole depth must be less than the rear cap length")
+    if (p.backFace === "screws" && p.backFaceHoleDiameter < screw.diameter)
+      issue("Rear holes must accommodate the screw diameter")
+  }
   const r = p.mountingHoleDiameter / 2
   if (p.frontCapLength + p.rearCapLength >= p.bodyLength)
     issue("End caps must leave a positive body length")

@@ -45,3 +45,35 @@ Duplicate, unknown and geometrically invalid parameters fail validation.
 This package defines parameters and parses model strings; it does not generate
 motor geometry. The corresponding components in jscad-electronics build the
 JSCAD solids and own the visual snapshots and geometry tests.
+
+## Rear face
+
+The rear face is Z=-bodyLength. Bare model strings show four installed socket-head
+cap screws. `_backfaceholes` removes the screws and exposes four blind bores;
+`_backfacescrews` explicitly selects installed screws. `_plainbackface` omits both.
+These flags are mutually exclusive. Direct props use `backFace: "holes" | "screws" | "plain"`.
+
+Rear fasteners are representative configurable details, not guaranteed by a NEMA
+frame number. The square rear pitch defaults to the mounting pitch (16 / 31 /
+47.14 mm), independently overridden by `backFaceHoleSpacing` / `_backholespacing`.
+The enabled rear face uses the front-face outline so the NEMA23 rear fasteners
+have support outside the chamfered core. Front flange holes are unchanged.
+
+| Rear default (mm) | NEMA8 | NEMA17 | NEMA23 |
+| --- | --- | --- | --- |
+| Screw size | M2 | M3 | M4 |
+| Bore diameter / depth | 2 / 2 | 3 / 4.5 | 4 / 4.5 |
+| Head diameter / height | 3.8 / 2 | 5.5 / 3 | 7 / 4 |
+
+`backFaceScrewSize` / `_backscrewm3` selects the existing ISO 4762 bolt
+head/socket dimensions. `backFaceHoleDiameter` / `_backholediameter` and
+`backFaceHoleDepth` / `_backholedepth` override the bores. Heads extend outward
+along -Z, increasing the complete model's length beyond the body length.
+Screw shanks are smooth and only occupy the rear bore; internal tie rods and
+threads are not represented. Validation rejects bores without floors,
+screws larger than the bore, and holes or heads that cross the rear-face edge.
+
+```ts
+mp.string("nema17_backfaceholes").json()
+mp.string("nema23_backfacescrews_backholespacing40mm_backscrewm3").json()
+```

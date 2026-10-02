@@ -5,7 +5,7 @@ import {
   type SheetMetalModelProps,
 } from "./sheet-metal-schema"
 
-/** Compile face-relative feature language to mesh-local coordinates. */
+/** Compile face-relative feature language to panel-local coordinates. */
 export function parseSheetMetalFeature(
   feature: string,
   profile: SheetMetalModelProps["profile"],

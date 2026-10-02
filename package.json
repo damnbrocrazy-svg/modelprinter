@@ -14,10 +14,11 @@
   "files": [
     "index.js",
     "index.d.ts",
-    "index.js.map"
+    "index.js.map",
+    "types"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --sourcemap --clean && bun scripts/prepare-package.ts",
+    "build": "tsup src/index.ts --format esm --sourcemap --clean && tsc -p tsconfig.build.json && bun scripts/prepare-package.ts",
     "prepack": "bun run build",
     "test": "bun test",
     "typecheck": "tsc --noEmit",

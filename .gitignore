@@ -10,3 +10,5 @@ node_modules
 # Lockfile generation is disabled in bunfig.toml
 bun.lock
 bun.lockb
+
+/types/

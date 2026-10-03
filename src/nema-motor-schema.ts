@@ -100,6 +100,13 @@ const shape = {
   backFaceHoleDiameter: positive.optional(),
   backFaceHoleDepth: positive.optional(),
   backFaceScrewSize: metricBoltSizeSchema.optional(),
+  /** Visual termination; the wireside reference exists even when hidden. */
+  wireConnection: z.enum(["none", "stubs", "jst-ph-6"]).optional(),
+  /** Counterclockwise angle about local +Z; 0 is the +X side. */
+  wireSideAngle: z.number().finite().optional(),
+  wireLength: positive.optional(),
+  wireDiameter: positive.optional(),
+  wireCount: z.number().int().min(2).max(8).optional(),
   bodyWidth: positive.optional(),
   bodyLength: positive.optional(),
   mountingHoleSpacing: positive.optional(),
@@ -129,6 +136,11 @@ const resolve = (p: z.output<z.ZodObject<typeof shape>>) => {
   const screw = hexSocketBoltDimensions[backFaceScrewSize]
   return {
     nemaSize: p.nemaSize,
+    wireConnection: p.wireConnection ?? "stubs",
+    wireSideAngle: (((p.wireSideAngle ?? 0) % 360) + 360) % 360,
+    wireLength: p.wireLength ?? 6,
+    wireDiameter: p.wireDiameter ?? 1.2,
+    wireCount: p.wireCount ?? 4,
     backFace: p.backFace ?? "screws",
     backFaceHoleSpacing:
       p.backFaceHoleSpacing ?? p.mountingHoleSpacing ?? d.mountingHoleSpacing,
@@ -177,6 +189,20 @@ const validate = (p: NemaMotorModelProps, ctx: z.RefinementCtx) => {
     if (p.backFace === "screws" && p.backFaceHoleDiameter < screw.diameter)
       issue("Rear holes must accommodate the screw diameter")
   }
+  if (p.wireConnection === "stubs") {
+    if (
+      p.wireDiameter * p.wireCount * 1.5 >
+      p.bodyWidth - 2 * p.faceCornerChamfer
+    )
+      issue("Wire bundle must fit on the cap side")
+    if (p.wireDiameter >= p.rearCapLength)
+      issue("Wire diameter must fit within the rear cap")
+  }
+  if (
+    p.wireConnection === "jst-ph-6" &&
+    p.bodyWidth - 2 * p.faceCornerChamfer < 13.9
+  )
+    issue("Six-position JST-PH header must fit on the motor side")
   const r = p.mountingHoleDiameter / 2
   if (p.frontCapLength + p.rearCapLength >= p.bodyLength)
     issue("End caps must leave a positive body length")

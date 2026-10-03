@@ -6,3 +6,5 @@ export * from "./hex-socket-bolt-schema"
 export * from "./sheet-metal-schema"
 
 export * from "./nema-motor-schema"
+
+export * from "./nema-motor-reference-points"

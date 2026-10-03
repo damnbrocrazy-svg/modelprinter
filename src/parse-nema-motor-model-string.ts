@@ -2,6 +2,8 @@ import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import type { RawModelprinterParams } from "./parse-model-string"
 
 const lengths = {
+  wirelength: "wireLength",
+  wirediameter: "wireDiameter",
   l: "bodyLength",
   length: "bodyLength",
   bodylength: "bodyLength",
@@ -52,13 +54,23 @@ export function parseNemaMotorModelParams(raw: RawModelprinterParams) {
           : name === "backfacescrews"
             ? "screws"
             : "plain"
+    } else if (["wirestubs", "nowires"].includes(name) || name === "jstph") {
+      if ((name === "jstph" && value !== "6") || (name !== "jstph" && value))
+        throw new Error(`Invalid wire connection token "${token}"`)
+      property = "wireConnection"
+      parsed =
+        name === "jstph" ? "jst-ph-6" : name === "nowires" ? "none" : "stubs"
+    } else if (name === "wirecount") {
+      property = "wireCount"
+      if (!/^\d+$/.test(value)) throw new Error("wirecount requires an integer")
+      parsed = Number(value)
     } else if (name === "backscrewm") {
       property = "backFaceScrewSize"
       parsed = `M${value}`
-    } else if (name === "flatangle") {
-      property = "shaftFlatAngle"
+    } else if (name === "flatangle" || name === "wireangle") {
+      property = name === "flatangle" ? "shaftFlatAngle" : "wireSideAngle"
       if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:deg)?$/i.test(value))
-        throw new Error("flatangle requires a numeric angle in degrees")
+        throw new Error(`${name} requires a numeric angle in degrees`)
       parsed = Number(value.replace(/deg$/i, ""))
     } else if (
       ["round", "dshaft", "throughholes", "blindholes"].includes(name)

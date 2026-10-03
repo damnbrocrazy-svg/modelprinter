@@ -8,3 +8,6 @@ export * from "./sheet-metal-schema"
 export * from "./nema-motor-schema"
 
 export * from "./nema-motor-reference-points"
+
+export * from "./spur-gear-schema"
+export * from "./worm-gear-schema"

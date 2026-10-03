@@ -3,6 +3,8 @@ import { parseSheetMetalModelParams } from "./parse-sheet-metal-model-string"
 import type { ModelDefinition } from "./flex-screen-schema"
 import { parseHexSocketBoltModelParams } from "./parse-hex-socket-bolt-model-string"
 import { parseFlexScreenModelParams } from "./parse-flex-screen-model-string"
+import { parseSpurGearModelParams } from "./parse-spur-gear-model-string"
+import { parseWormGearModelParams } from "./parse-worm-gear-model-string"
 import {
   parseModelStringParams,
   type RawModelprinterParams,
@@ -13,6 +15,8 @@ const modelFunctions = {
   sheetmetal: parseSheetMetalModelParams,
   flexscreen: parseFlexScreenModelParams,
   hexsocketbolt: parseHexSocketBoltModelParams,
+  spurgear: parseSpurGearModelParams,
+  wormgear: parseWormGearModelParams,
 }
 
 const modelParamsToJson = (params: RawModelprinterParams): ModelDefinition => {

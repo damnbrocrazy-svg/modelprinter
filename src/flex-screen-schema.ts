@@ -2,6 +2,8 @@ import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"
 import { z } from "zod"
 import { hexSocketBoltModelDefinitionSchema } from "./hex-socket-bolt-schema"
+import { spurGearModelDefinitionSchema } from "./spur-gear-schema"
+import { wormGearModelDefinitionSchema } from "./worm-gear-schema"
 import {
   modelLengthSchema,
   positiveModelLengthSchema,
@@ -203,5 +205,7 @@ export const modelDefinitionSchema = z.union([
   sheetMetalModelDefinitionSchema,
   flexScreenModelDefinitionSchema,
   hexSocketBoltModelDefinitionSchema,
+  spurGearModelDefinitionSchema,
+  wormGearModelDefinitionSchema,
 ])
 export type ModelDefinition = z.infer<typeof modelDefinitionSchema>

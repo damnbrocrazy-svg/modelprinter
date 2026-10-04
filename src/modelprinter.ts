@@ -1,4 +1,5 @@
 import { parseNemaMotorModelParams } from "./parse-nema-motor-model-string"
+import { parseFlatWasherModelParams } from "./parse-flat-washer-model-string"
 import { parseSheetMetalModelParams } from "./parse-sheet-metal-model-string"
 import type { ModelDefinition } from "./flex-screen-schema"
 import { parseHexSocketBoltModelParams } from "./parse-hex-socket-bolt-model-string"
@@ -13,6 +14,7 @@ import {
 import { parseHelicalGearModelParams } from "./parse-helical-gear-model-string"
 
 const modelFunctions = {
+  flatwasher: parseFlatWasherModelParams,
   helicalgear: parseHelicalGearModelParams,
   nema: parseNemaMotorModelParams,
   sheetmetal: parseSheetMetalModelParams,

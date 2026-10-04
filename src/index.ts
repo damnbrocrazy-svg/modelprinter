@@ -11,3 +11,4 @@ export * from "./nema-motor-reference-points"
 
 export * from "./spur-gear-schema"
 export * from "./worm-gear-schema"
+export * from "./helical-gear-schema"

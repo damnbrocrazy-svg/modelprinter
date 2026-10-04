@@ -1,7 +1,8 @@
 # Parameterized gears
 
 `spurgear` describes an external involute spur gear. `wormgear` describes the
-helical worm screw in a worm drive. Both produce renderer-independent model
+helical worm screw in a worm drive. `helicalgear` describes an external
+helical involute gear. All three produce renderer-independent model
 definitions; JSCAD solids and geometry tests belong in jscad-electronics.
 
 This initial contract supports visualization and mechanical layout. Spur tooth
@@ -139,3 +140,80 @@ optional defaulted properties; `SpurGearModelProps` / `WormGearModelProps` conta
 normalized numbers and resolved defaults. Their `ModelDefinition` counterparts
 add `fn: "spurgear"` / `fn: "wormgear"` and are included in the exported
 `modelDefinitionSchema` union. Dimension helpers accept props without `fn`.
+
+## Helical gear
+
+`helicalgear` sweeps the spur gear's transverse involute profile along a helix.
+It shares all spur properties, defaults, units, tooth-profile validation, bore,
+hub, phase, and +Z placement. Its `module`, `pressureAngle`, and `backlash` are
+**transverse**, measured in the XY section. At `helixAngle: 0`, it has the same
+geometry and dimensions as a spur gear with the same properties.
+
+```ts
+import { getHelicalGearDimensions, getWormGearDimensions, helicalGearModelPropsSchema, mp } from "@tscircuit/modelprinter"
+
+mp.string("helicalgear24_m1mm_w8mm_ha25deg_right_bore5mm").json()
+mp.string("helicalgear_teeth32_module1mm_helixangle30deg_left_hubdiameter12mm_hublength3mm").json()
+helicalGearModelPropsSchema.parse({ toothCount: 24, module: "1mm", helixAngle: 25 })
+getHelicalGearDimensions({ toothCount: 24, module: 1, helixAngle: 25 })
+```
+
+| Additional property | Default | Model-string modifier | Meaning |
+| --- | --- | --- | --- |
+| `helixAngle` | 20° | `ha`, `helixangle` | Finite unsigned angle to the axis at the pitch cylinder, 0 ≤ angle < 90° |
+| `handedness` | `"right"` | `right`, `left` | Mutually exclusive flags, following the worm convention |
+| `segmentsPerTurn` | 32 | `turnsegments` | Integer 12–128; minimum subdivisions per full turn of twist |
+
+Inline tooth count uses `helicalgear24`; `teeth`, `segments`, and every spur
+length/angle modifier also work. Negative helix angles are rejected; choose
+`left` to reverse the twist. A right-hand tooth advances counterclockwise about
++Z as Z increases. Phase specifies tooth orientation at Z=0. The bore and hub
+remain straight circular cylinders.
+
+`getHelicalGearDimensions` returns all spur dimensions plus, for helix angle
+`beta` in radians and pitch diameter `d`:
+
+| Dimension | Formula |
+| --- | --- |
+| `normalModule` | `module * cos(beta)` |
+| `normalPressureAngle` | `atan(tan(pressureAngle) * cos(beta))`, in degrees |
+| `normalPitch` | `circularPitch * cos(beta)` |
+| `twistAngle` | `hand * 2 * faceWidth * tan(beta) / d`, in degrees; `hand` is +1 for right and −1 for left |
+
+All derived dimensions must be finite. `twistAngle` is zero for a spur profile.
+The exports `HelicalGearModelPropsInput`, `HelicalGearModelProps`,
+`HelicalGearModelDefinition`, `helicalGearModelPropsSchema`, and
+`helicalGearModelDefinitionSchema` follow the spur/worm contracts. The definition
+has `fn: "helicalgear"` and is part of `modelDefinitionSchema`.
+
+### Meshing conventions
+
+Parallel-axis external helical gears use matching transverse module, pressure
+angle, and helix-angle magnitude, with opposite hands. Their nominal center
+distance is `module * (toothCountA + toothCountB) / 2`. To mesh with a spur gear
+on a parallel shaft, use zero helix angle. A nonzero helical gear is not a
+parallel-axis replacement for a spur gear. Crossed-axis arrangements require
+matching normal module and normal pressure angle and the appropriate shaft
+angle; equal transverse module alone is insufficient.
+
+For a simplified perpendicular worm/helical-wheel layout, set the wheel's
+transverse module and pressure angle equal to the worm's axial values, its
+helix angle equal to the worm's lead angle, and use the same hand:
+
+```ts
+const worm = { module: 1, pitchDiameter: 10, starts: 2, pressureAngle: 20, handedness: "right" as const }
+const wheel = helicalGearModelPropsSchema.parse({
+  toothCount: 32,
+  module: worm.module,
+  pressureAngle: worm.pressureAngle,
+  helixAngle: getWormGearDimensions(worm).leadAngle,
+  handedness: worm.handedness,
+})
+```
+
+This matches nominal pitch and helix conventions, with center distance
+`(worm.pitchDiameter + wheel.module * wheel.toothCount) / 2` and nominal speed
+ratio `wheel.toothCount / worm.starts`. It does not generate a throated/hobbed
+worm wheel or establish conjugate contact with the existing simplified worm.
+These remain visualization and layout models, without manufacturing tolerances,
+contact analysis, root fillets, or undercut.

@@ -1,3 +1,4 @@
+import { helicalGearModelDefinitionSchema } from "./helical-gear-schema"
 import { nemaMotorModelDefinitionSchema } from "./nema-motor-schema"
 import { sheetMetalModelDefinitionSchema } from "./sheet-metal-schema"
 import { z } from "zod"
@@ -205,6 +206,7 @@ export const modelDefinitionSchema = z.union([
   sheetMetalModelDefinitionSchema,
   flexScreenModelDefinitionSchema,
   hexSocketBoltModelDefinitionSchema,
+  helicalGearModelDefinitionSchema,
   spurGearModelDefinitionSchema,
   wormGearModelDefinitionSchema,
 ])

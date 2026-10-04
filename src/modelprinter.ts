@@ -10,7 +10,10 @@ import {
   type RawModelprinterParams,
 } from "./parse-model-string"
 
+import { parseHelicalGearModelParams } from "./parse-helical-gear-model-string"
+
 const modelFunctions = {
+  helicalgear: parseHelicalGearModelParams,
   nema: parseNemaMotorModelParams,
   sheetmetal: parseSheetMetalModelParams,
   flexscreen: parseFlexScreenModelParams,
